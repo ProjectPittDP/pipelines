@@ -1,3 +1,13 @@
+"""
+title: Filter Pipeline
+author: asmith
+date: 2024-06-06
+version: 1.0
+license: MIT
+description: Example of a filter pipeline that can be used to edit the form data before it is sent to the OpenAI API.
+requirements: requests weaviate-client
+"""
+
 from typing import List, Union, Generator, Iterator
 from schemas import OpenAIChatMessage
 from pydantic import BaseModel
@@ -44,15 +54,11 @@ class Pipeline:
             # ollama_additional_kwargs={"mirostat": 0.1},
         )
 
-        self.documents = SimpleDirectoryReader("./data").load_data()
-        self.index = VectorStoreIndex.from_documents(self.documents)
-
         # clear vector store
-        vector_store.delete_index()
+        # vector_store.delete_index()
 
         # embed content and store vectors
-
-        index_name = "Paul_Graham"
+        index_name = self.name
 
         vector_store = WeaviateVectorStore(weaviate_client=client, index_name=index_name)
         storage_context = StorageContext.from_defaults(vector_store=vector_store)
@@ -95,11 +101,19 @@ class Pipeline:
     ) -> Union[str, Generator, Iterator]:
         # This is where you can add your custom pipelines like RAG.
         print(f"pipe:{__name__}")
+        print("=====StartSelfPrint=====")
+        print(self)
+        print("=====EndSelfPrint=====")
 
         # If you'd like to check for title generation, you can add the following check
         if body.get("title", False):
             print("Title Generation Request")
         else:
+
+
+            # self.documents = SimpleDirectoryReader("./data").load_data()
+            # self.index = VectorStoreIndex.from_documents(self.documents)
+
             query_engine = self.index.as_query_engine(streaming=True)
             response = query_engine.query(user_message)
 
