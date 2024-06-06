@@ -1,8 +1,7 @@
 from typing import List, Union, Generator, Iterator
 from schemas import OpenAIChatMessage
 from pydantic import BaseModel
-import requests
-import os
+
 
 class Pipeline:
     class Valves(BaseModel):
@@ -16,11 +15,8 @@ class Pipeline:
         # self.id = "pipeline_example"
 
         # The name of the pipeline.
-        self.name = "Debevoise Data Blog"
-        
-        # Initialize rate limits
-        self.valves = self.Valves()
-
+        self.name = "Pipeline Example"
+        pass
 
     async def on_startup(self):
         # This function is called when the server is started.
@@ -60,37 +56,10 @@ class Pipeline:
         # This is where you can add your custom pipelines like RAG.
         print(f"pipe:{__name__}")
 
-        # # If you'd like to check for title generation, you can add the following check
-        # if body.get("title", False):
-        #     print("Data Blog Chat")
-        # else:
-        #     titles = []
-        #     for query in [user_message]:
-        #         query = query.replace(" ", "_")
+        # If you'd like to check for title generation, you can add the following check
+        if body.get("title", False):
+            print("Title Generation Request")
 
-        #         r = requests.get(
-        #             f"https://www.example.com/?s={query}"
-        #         )
-
-        #         response = r.json()
-        #         titles = titles + response[1]
-        #         print(titles)
-
-        #     context = None
-        #     if len(titles) > 0:
-        #         r = requests.get(
-        #             f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles={'|'.join(titles)}"
-        #         )
-        #         response = r.json()
-        #         # get extracts
-        #         pages = response["query"]["pages"]
-        #         for page in pages:
-        #             if context == None:
-        #                 context = pages[page]["extract"] + "\n"
-        #             else:
-        #                 context = context + pages[page]["extract"] + "\n"
-
-        #     return context if context else "No information found"
         print(messages)
         print(user_message)
         print(body)
