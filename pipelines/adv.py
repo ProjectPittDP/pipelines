@@ -4,8 +4,8 @@ author: asmith
 date: 2024-06-06
 version: 1.0
 license: MIT
-description: Example of a filter pipeline that can be used to edit the form data before it is sent to the OpenAI API.
-requirements: requests weaviate-client
+description: Weaviate RAG pipeline
+requirements: requests, weaviate-client
 """
 
 from typing import List, Union, Generator, Iterator
