@@ -18,7 +18,7 @@ from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.core import Settings
 from llama_index.core import StorageContext
-
+import pprint
 
 class Pipeline:
     class Valves(BaseModel):
@@ -102,7 +102,7 @@ class Pipeline:
         # This is where you can add your custom pipelines like RAG.
         print(f"pipe:{__name__}")
         print("=====StartSelfPrint=====")
-        print(self)
+        pprint.pprint(self)
         print("=====EndSelfPrint=====")
 
         # If you'd like to check for title generation, you can add the following check
