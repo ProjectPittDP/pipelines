@@ -18,7 +18,8 @@ from llama_index.llms.ollama import Ollama
 from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.core import Settings
 from llama_index.core import StorageContext
-import pprint
+import requests
+
 
 class Pipeline:
     class Valves(BaseModel):
