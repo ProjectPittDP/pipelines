@@ -24,7 +24,7 @@ class Pipeline:
         # This function is called when the server is started.
         print(f"on_startup:{__name__}")
         weaviate_client = weaviate.Client("http://host.docker.internal:8080")
-        client = weaviate.connect_to_local("http://host.docker.internal","8080")
+        client = weaviate.connect_to_local("host.docker.internal","8080")
         index_name="ADV"
         client.collections.create(
             index_name,
