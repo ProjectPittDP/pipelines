@@ -80,13 +80,10 @@ class Pipeline:
 
     async def inlet(self, body: dict, user: dict) -> dict:
         # This function is called before the OpenAI API request is made. You can modify the form data before it is sent to the OpenAI API.
-        print(f"inlet:{__name__}")
-        print("vvvvvBODYvvvvv")
+
         print(body)
-        print("^^^^^BODY^^^^^")
-        print("vvvvvUSERvvvvv")
         print(user)
-        print("^^^^^USER^^^^^")
+
         return body
 
     async def outlet(self, body: dict, user: dict) -> dict:
@@ -103,21 +100,29 @@ class Pipeline:
     ) -> Union[str, Generator, Iterator]:
         # This is where you can add your custom pipelines like RAG.
         print(f"pipe:{__name__}")
-        print("=====StartSelfPrint=====")
-        self.__dict__
-        print("=====EndSelfPrint=====")
 
         # If you'd like to check for title generation, you can add the following check
         if body.get("title", False):
             print("Title Generation Request")
-        # else:
+            
+        if "user" in body:
+            print("######################################")
+            print(f'# User: {body["user"]["name"]} ({body["user"]["id"]})')
+            print(f"# Message: {user_message}")
+            print("######################################")
 
+        try:
+            r = requests.post(
+                url=f"{self.valves.OLLAMA_BASE_URL}/v1/chat/completions",
+                json={**body, "model": model_id},
+                stream=True,
+            )
 
-            # self.documents = SimpleDirectoryReader("./data").load_data()
-            # self.index = VectorStoreIndex.from_documents(self.documents)
+            r.raise_for_status()
 
-            # query_engine = self.index.as_query_engine(streaming=True)
-            # response = query_engine.query(user_message)
-
-        return "response"
-        # return response.response_gen
+            if body["stream"]:
+                return r.iter_lines()
+            else:
+                return r.json()
+        except Exception as e:
+            return f"Error: {e}"
