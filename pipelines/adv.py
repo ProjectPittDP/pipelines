@@ -30,8 +30,8 @@ class Pipeline:
         print(f"on_startup:{__name__}")
         client = weaviate.connect_to_local("host.docker.internal","8080")
 
-        dataset = load_dataset("bilgeyucel/seven-wonders", split="train")
-        docs = [Document(content=doc["content"], meta=doc["meta"]) for doc in dataset]
+        # dataset = load_dataset("bilgeyucel/seven-wonders", split="train")
+        # docs = [Document(content=doc["content"], meta=doc["meta"]) for doc in dataset]
 
         # documents = SimpleDirectoryReader("./data/").load_data()
         
