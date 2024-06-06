@@ -51,7 +51,7 @@ class Pipeline:
 
         Settings.embed_model = OllamaEmbedding(
             model_name="nomic-embed-text",
-            base_url="http://localhost:11434",
+            base_url="http://host.docker.internal:11434",
             # ollama_additional_kwargs={"mirostat": 0.1},
         )
 
@@ -106,7 +106,7 @@ class Pipeline:
         if body.get("title", False):
             print("Title Generation Request")
 
-        OLLAMA_BASE_URL = "http://localhost:11434"
+        OLLAMA_BASE_URL = "http://host.docker.internal:11434"
         MODEL = "llama3"
 
         if "user" in body:
