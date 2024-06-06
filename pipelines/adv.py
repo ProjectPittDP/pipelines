@@ -44,7 +44,7 @@ class Pipeline:
         # docs = [Document(content=doc["content"], meta=doc["meta"]) for doc in dataset]
 
         # documents = SimpleDirectoryReader("./data/").load_data()
-        
+
         # config llm and embeddings
         Settings.llm = Ollama(model="llama3", request_timeout=120.0)
 
@@ -108,13 +108,14 @@ class Pipeline:
         # If you'd like to check for title generation, you can add the following check
         if body.get("title", False):
             print("Title Generation Request")
-        else:
+        # else:
 
 
             # self.documents = SimpleDirectoryReader("./data").load_data()
             # self.index = VectorStoreIndex.from_documents(self.documents)
 
-            query_engine = self.index.as_query_engine(streaming=True)
-            response = query_engine.query(user_message)
+            # query_engine = self.index.as_query_engine(streaming=True)
+            # response = query_engine.query(user_message)
 
-        return response.response_gen
+        return "response"
+        # return response.response_gen
