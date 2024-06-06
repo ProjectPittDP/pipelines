@@ -104,7 +104,10 @@ class Pipeline:
         # If you'd like to check for title generation, you can add the following check
         if body.get("title", False):
             print("Title Generation Request")
-            
+
+        OLLAMA_BASE_URL = "http://localhost:11434"
+        MODEL = "llama3"
+
         if "user" in body:
             print("######################################")
             print(f'# User: {body["user"]["name"]} ({body["user"]["id"]})')
@@ -113,8 +116,8 @@ class Pipeline:
 
         try:
             r = requests.post(
-                url=f"{self.valves.OLLAMA_BASE_URL}/v1/chat/completions",
-                json={**body, "model": model_id},
+                url=f"{OLLAMA_BASE_URL}/v1/chat/completions",
+                json={**body, "model": MODEL},
                 stream=True,
             )
 
