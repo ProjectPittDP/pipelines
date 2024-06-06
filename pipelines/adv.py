@@ -102,7 +102,7 @@ class Pipeline:
         # This is where you can add your custom pipelines like RAG.
         print(f"pipe:{__name__}")
         print("=====StartSelfPrint=====")
-        pprint.pprint(self)
+        self.__dict__
         print("=====EndSelfPrint=====")
 
         # If you'd like to check for title generation, you can add the following check
