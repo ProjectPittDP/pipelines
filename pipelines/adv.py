@@ -1,9 +1,14 @@
 from typing import List, Union, Generator, Iterator
 from schemas import OpenAIChatMessage
 from pydantic import BaseModel
+from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
+from llama_index.vector_stores.weaviate import WeaviateVectorStore
 import weaviate
-from langchain_community.retrievers import (WeaviateHybridSearchRetriever,)
-from weaviate.classes.config import Configure
+from llama_index.llms.ollama import Ollama
+from llama_index.embeddings.ollama import OllamaEmbedding
+from llama_index.core import Settings
+from llama_index.core import StorageContext
+
 
 class Pipeline:
     class Valves(BaseModel):
@@ -23,18 +28,39 @@ class Pipeline:
     async def on_startup(self):
         # This function is called when the server is started.
         print(f"on_startup:{__name__}")
-        weaviate_client = weaviate.Client("http://host.docker.internal:8080")
         client = weaviate.connect_to_local("host.docker.internal","8080")
-        index_name="ADV"
-        client.collections.create(
-            index_name,
-            #see notes above re: the docker modules that need to be enabled for text2vec* to work correctly -e ENABLE_MODULES=text2vec-ollama
-            vectorizer_config=Configure.Vectorizer.text2vec_ollama( 
-            model="nomic-embed-text",    
-            api_endpoint="http://host.docker.internal:11434",
-        ),
 
-)
+        dataset = load_dataset("bilgeyucel/seven-wonders", split="train")
+        docs = [Document(content=doc["content"], meta=doc["meta"]) for doc in dataset]
+
+        # documents = SimpleDirectoryReader("./data/").load_data()
+        
+        # config llm and embeddings
+        Settings.llm = Ollama(model="llama3", request_timeout=120.0)
+
+        Settings.embed_model = OllamaEmbedding(
+            model_name="nomic-embed-text",
+            base_url="http://localhost:11434",
+            # ollama_additional_kwargs={"mirostat": 0.1},
+        )
+
+        self.documents = SimpleDirectoryReader("./data").load_data()
+        self.index = VectorStoreIndex.from_documents(self.documents)
+
+        # clear vector store
+        vector_store.delete_index()
+
+        # embed content and store vectors
+
+        index_name = "Paul_Graham"
+
+        vector_store = WeaviateVectorStore(weaviate_client=client, index_name=index_name)
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        index = VectorStoreIndex.from_documents(
+            documents, storage_context=storage_context
+        )
+        query_engine = index.as_query_engine(similarity_top_k=2)
+
         pass
 
     async def on_shutdown(self):
@@ -73,9 +99,8 @@ class Pipeline:
         # If you'd like to check for title generation, you can add the following check
         if body.get("title", False):
             print("Title Generation Request")
+        else:
+            query_engine = self.index.as_query_engine(streaming=True)
+            response = query_engine.query(user_message)
 
-        print(messages)
-        print(user_message)
-        print(body)
-
-        return f"{__name__} response to: {user_message}"
+        return response.response_gen
