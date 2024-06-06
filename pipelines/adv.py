@@ -57,15 +57,15 @@ class Pipeline:
         # clear vector store
         # vector_store.delete_index()
 
-        # embed content and store vectors
-        index_name = self.name
+        # # embed content and store vectors
+        # index_name = self.name
 
-        vector_store = WeaviateVectorStore(weaviate_client=client, index_name=index_name)
-        storage_context = StorageContext.from_defaults(vector_store=vector_store)
-        index = VectorStoreIndex.from_documents(
-            documents, storage_context=storage_context
-        )
-        query_engine = index.as_query_engine(similarity_top_k=2)
+        # vector_store = WeaviateVectorStore(weaviate_client=client, index_name=index_name)
+        # storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        # index = VectorStoreIndex.from_documents(
+        #     documents, storage_context=storage_context
+        # )
+        # query_engine = index.as_query_engine(similarity_top_k=2)
 
         pass
 
