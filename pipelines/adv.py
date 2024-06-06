@@ -1,7 +1,9 @@
 from typing import List, Union, Generator, Iterator
 from schemas import OpenAIChatMessage
 from pydantic import BaseModel
-
+import weaviate
+from langchain_community.retrievers import (WeaviateHybridSearchRetriever,)
+from weaviate.classes.config import Configure
 
 class Pipeline:
     class Valves(BaseModel):
@@ -21,6 +23,18 @@ class Pipeline:
     async def on_startup(self):
         # This function is called when the server is started.
         print(f"on_startup:{__name__}")
+        weaviate_client = weaviate.Client("http://localhost:8080")
+        client = weaviate.connect_to_local("localhost","8080")
+        index_name="ADV"
+        client.collections.create(
+            index_name,
+            #see notes above re: the docker modules that need to be enabled for text2vec* to work correctly -e ENABLE_MODULES=text2vec-ollama
+            vectorizer_config=Configure.Vectorizer.text2vec_ollama( 
+            model="nomic-embed-text",    
+            api_endpoint="http://host.docker.internal:11434",
+        ),
+
+)
         pass
 
     async def on_shutdown(self):
