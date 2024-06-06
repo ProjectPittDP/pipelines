@@ -73,6 +73,7 @@ class Pipeline:
     async def on_shutdown(self):
         # This function is called when the server is stopped.
         print(f"on_shutdown:{__name__}")
+        client.close()
         pass
 
     async def on_valves_updated(self):
