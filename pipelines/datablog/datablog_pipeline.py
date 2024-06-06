@@ -60,37 +60,37 @@ class Pipeline:
         # This is where you can add your custom pipelines like RAG.
         print(f"pipe:{__name__}")
 
-        # If you'd like to check for title generation, you can add the following check
-        if body.get("title", False):
-            print("Data Blog Chat")
-        else:
-            titles = []
-            for query in [user_message]:
-                # query = query.replace(" ", "_")
+        # # If you'd like to check for title generation, you can add the following check
+        # if body.get("title", False):
+        #     print("Data Blog Chat")
+        # else:
+        #     titles = []
+        #     for query in [user_message]:
+        #         query = query.replace(" ", "_")
 
-                r = requests.get(
-                    f"https://www.example.com/?s={query}"
-                )
+        #         r = requests.get(
+        #             f"https://www.example.com/?s={query}"
+        #         )
 
-                response = r.json()
-                titles = titles + response[1]
-                print(titles)
+        #         response = r.json()
+        #         titles = titles + response[1]
+        #         print(titles)
 
-            context = None
-            if len(titles) > 0:
-                r = requests.get(
-                    f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles={'|'.join(titles)}"
-                )
-                response = r.json()
-                # get extracts
-                pages = response["query"]["pages"]
-                for page in pages:
-                    if context == None:
-                        context = pages[page]["extract"] + "\n"
-                    else:
-                        context = context + pages[page]["extract"] + "\n"
+        #     context = None
+        #     if len(titles) > 0:
+        #         r = requests.get(
+        #             f"https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles={'|'.join(titles)}"
+        #         )
+        #         response = r.json()
+        #         # get extracts
+        #         pages = response["query"]["pages"]
+        #         for page in pages:
+        #             if context == None:
+        #                 context = pages[page]["extract"] + "\n"
+        #             else:
+        #                 context = context + pages[page]["extract"] + "\n"
 
-            return context if context else "No information found"
+        #     return context if context else "No information found"
         print(messages)
         print(user_message)
         print(body)
