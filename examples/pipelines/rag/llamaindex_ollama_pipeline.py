@@ -16,6 +16,7 @@ class Pipeline:
     def __init__(self):
         self.documents = None
         self.index = None
+        self.name = "Ollama"
 
     async def on_startup(self):
         from llama_index.embeddings.ollama import OllamaEmbedding
