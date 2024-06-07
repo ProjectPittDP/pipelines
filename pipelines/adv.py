@@ -2,7 +2,7 @@
 title: ADV Pipeline
 author: asmith
 date: 2024-06-06
-version: 1.0
+version: 1.1
 license: MIT
 description: Weaviate RAG pipeline
 requirements: requests, weaviate-client
@@ -55,19 +55,11 @@ class Pipeline:
             # ollama_additional_kwargs={"mirostat": 0.1},
         )
 
-        # clear vector store
-        # vector_store.delete_index()
+        # This function is called when the server is started.
+        global documents, index
 
-        # # embed content and store vectors
-        # index_name = self.name
-
-        # vector_store = WeaviateVectorStore(weaviate_client=client, index_name=index_name)
-        # storage_context = StorageContext.from_defaults(vector_store=vector_store)
-        # index = VectorStoreIndex.from_documents(
-        #     documents, storage_context=storage_context
-        # )
-        # query_engine = index.as_query_engine(similarity_top_k=2)
-
+        self.documents = SimpleDirectoryReader("./data").load_data()
+        self.index = VectorStoreIndex.from_documents(self.documents)
         pass
 
     async def on_shutdown(self):
@@ -107,27 +99,35 @@ class Pipeline:
         if body.get("title", False):
             print("Title Generation Request")
 
-        OLLAMA_BASE_URL = "http://host.docker.internal:11434"
-        MODEL = "llama3"
+        # OLLAMA_BASE_URL = "http://host.docker.internal:11434"
+        # MODEL = "llama3"
 
-        if "user" in body:
-            print("######################################")
-            print(f'# User: {body["user"]["name"]} ({body["user"]["id"]})')
-            print(f"# Message: {user_message}")
-            print("######################################")
+        # if "user" in body:
+        #     print("######################################")
+        #     print(f'# User: {body["user"]["name"]} ({body["user"]["id"]})')
+        #     print(f"# Message: {user_message}")
+        #     print("######################################")
 
-        try:
-            r = requests.post(
-                url=f"{OLLAMA_BASE_URL}/v1/chat/completions",
-                json={**body, "model": MODEL},
-                stream=True,
-            )
+        # try:
+        #     r = requests.post(
+        #         url=f"{OLLAMA_BASE_URL}/v1/chat/completions",
+        #         json={**body, "model": MODEL},
+        #         stream=True,
+        #     )
 
-            r.raise_for_status()
+        #     r.raise_for_status()
 
-            if body["stream"]:
-                return r.iter_lines()
-            else:
-                return r.json()
-        except Exception as e:
-            return f"Error: {e}"
+        #     if body["stream"]:
+        #         return r.iter_lines()
+        #     else:
+        #         return r.json()
+        # except Exception as e:
+        #     return f"Error: {e}"
+        
+        print(messages)
+        print(user_message)
+
+        query_engine = self.index.as_query_engine(streaming=True)
+        response = query_engine.query(user_message)
+
+        return response.response_gen
