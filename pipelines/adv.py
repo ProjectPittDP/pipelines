@@ -2,7 +2,7 @@
 title: ADV Pipeline
 author: asmith
 date: 2024-06-06
-version: 1.1
+version: 1.0
 license: MIT
 description: Weaviate RAG pipeline
 requirements: requests, weaviate-client
@@ -19,7 +19,6 @@ from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.core import Settings
 from llama_index.core import StorageContext
 import requests
-
 
 class Pipeline:
     class Valves(BaseModel):
@@ -39,6 +38,7 @@ class Pipeline:
     async def on_startup(self):
         # This function is called when the server is started.
         print(f"on_startup:{__name__}")
+        global client
         client = weaviate.connect_to_local("host.docker.internal","8080")
 
         # dataset = load_dataset("bilgeyucel/seven-wonders", split="train")
