@@ -5,7 +5,7 @@ date: 2024-06-06
 version: 1.0
 license: MIT
 description: Weaviate RAG pipeline
-requirements: requests
+requirements: requests, llama-index, llama-index-llms-ollama, llama-index-embeddings-ollama
 """
 
 from typing import List, Union, Generator, Iterator
